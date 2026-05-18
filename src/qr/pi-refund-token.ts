@@ -10,7 +10,7 @@
  */
 
 import QRCode from "qrcode";
-import { randomUUID, randomHex } from "../core/crypto-utils.js";
+import { randomUUID } from "../core/crypto-utils.js";
 import type { RefundToken } from "../types/payment.js";
 
 // ---------------------------------------------------------------------------
@@ -52,17 +52,32 @@ export class PiRefundToken {
   private readonly qrSize: number;
   private readonly backgroundColor: string;
   private readonly foregroundColor: string;
+  /**
+   * Stable HMAC signing secret.
+   * In production, inject this from your key management service via
+   * the `signingSecret` constructor option or the
+   * `PI_REFUND_SIGNING_SECRET` environment variable.
+   */
+  private readonly signingSecret: string;
 
   constructor(
     options: {
       qrSize?: number;
       backgroundColor?: string;
       foregroundColor?: string;
+      /** Stable signing secret for HMAC-SHA256. Must be the same value
+       *  for both `generate()` and `verify()` calls. */
+      signingSecret?: string;
     } = {}
   ) {
     this.qrSize = options.qrSize ?? 300;
     this.backgroundColor = options.backgroundColor ?? "#0A0A0F";
     this.foregroundColor = options.foregroundColor ?? "#F0C040";
+    this.signingSecret =
+      options.signingSecret ??
+      (typeof process !== "undefined"
+        ? (process.env["PI_REFUND_SIGNING_SECRET"] ?? "pi-refund-default-secret")
+        : "pi-refund-default-secret");
   }
 
   // -------------------------------------------------------------------------
@@ -155,20 +170,19 @@ export class PiRefundToken {
   }
 
   /**
-   * Sign a canonical message using HMAC-SHA256 (server-issued secret in prod).
-   * In a production system, replace the signing secret with a value from
-   * your key management service.
+   * Sign a canonical message using HMAC-SHA256 with the instance's stable
+   * signing secret. The same instance (or an instance constructed with the
+   * same `signingSecret`) must be used for both `generate()` and `verify()`.
+   *
+   * In production, always set the signing secret via `PI_REFUND_SIGNING_SECRET`
+   * or the constructor `signingSecret` option.
    */
   private async _sign(message: string): Promise<string> {
-    // Use a random hex nonce as entropy source for the signing key.
-    // In production this should be a stable server-side secret.
-    const secret = `pi-refund-${randomHex(8)}`;
-
     try {
       const enc = new TextEncoder();
       const keyMaterial = await crypto.subtle.importKey(
         "raw",
-        enc.encode(secret),
+        enc.encode(this.signingSecret),
         { name: "HMAC", hash: "SHA-256" },
         false,
         ["sign"]

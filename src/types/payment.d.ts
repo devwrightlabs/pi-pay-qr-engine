@@ -15,7 +15,7 @@ export type CurrencyCode =
   | "USD"
   | "EUR"
   | "GBP"
-  | "BSD" // Bahamian Sand Dollar
+  | "BSD" // Bahamian Dollar (BSD) / digital Bahamian dollar CBDC
   | "JPY"
   | "CAD"
   | "AUD"

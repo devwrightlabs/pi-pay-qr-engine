@@ -1,0 +1,61 @@
+{
+  "name": "@devright/pi-pay-qr-engine",
+  "version": "1.0.0",
+  "description": "Advanced, strictly typed TypeScript payment engine and dynamic QR builder for the native Pi Network mobile webview container. Engineered for React and Next.js App Router.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "pi-network",
+    "pi-payments",
+    "qr-code",
+    "crypto-payments",
+    "react",
+    "nextjs",
+    "typescript",
+    "payment-engine",
+    "devright"
+  ],
+  "author": "Devright Labs",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "qrcode": ">=1.5.0"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": false },
+    "react-dom": { "optional": false },
+    "qrcode": { "optional": false }
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/web-bluetooth": "^0.0.20",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "qrcode": "^1.5.4",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.2"
+  }
+}
